@@ -1,322 +1,245 @@
-const canvas =
-    document.getElementById("grafica");
+let m = 0;
+let b = 0;
 
-const ctx =
-    canvas.getContext("2d");
+let segundoX = 1;
+let segundoY = 0;
 
-
-let escala = 45;
+let zoom = 40;
 
 let desplazamientoX = 0;
-
 let desplazamientoY = 0;
 
-
-let pendienteActual = 0;
-
-let corteActual = 0;
-
-
 let arrastrando = false;
+let ultimoX = 0;
+let ultimoY = 0;
 
-let inicioX = 0;
-
-let inicioY = 0;
-
-
-
-/* =========================
-   MÁXIMO COMÚN DIVISOR
-========================= */
-
-function mcd(a, b) {
-
-    a = Math.abs(a);
-
-    b = Math.abs(b);
-
-
-    while (b !== 0) {
-
-        let temporal = b;
-
-        b = a % b;
-
-        a = temporal;
-
-    }
-
-
-    return a;
-}
-
+const canvas = document.getElementById("grafica");
+const ctx = canvas.getContext("2d");
 
 
 /* =========================
    FRACCIONES
 ========================= */
 
-function fraccion(
-    numerador,
-    denominador
-) {
+function mcd(a, b) {
 
-    if (denominador === 0) {
+    a = Math.abs(a);
+    b = Math.abs(b);
 
-        return "Indefinido";
+    while (b !== 0) {
 
+        let temporal = b;
+
+        b = a % b;
+        a = temporal;
     }
 
+    return a;
+}
 
-    if (numerador === 0) {
 
-        return "0";
+function fraccion(numero) {
 
+    if (Number.isInteger(numero)) {
+        return numero.toString();
     }
 
+    const precision = 1000000;
 
-    if (denominador < 0) {
+    let numerador =
+        Math.round(numero * precision);
 
-        numerador *= -1;
+    let denominador =
+        precision;
 
-        denominador *= -1;
-
-    }
-
-
-    const divisor =
-        mcd(
-            numerador,
-            denominador
-        );
-
+    let divisor =
+        mcd(numerador, denominador);
 
     numerador /= divisor;
-
     denominador /= divisor;
 
-
     if (denominador === 1) {
-
-        return `${numerador}`;
-
+        return numerador.toString();
     }
-
 
     return `${numerador}/${denominador}`;
-
 }
-
-
-
-/* =========================
-   TERMINOS
-========================= */
-
-function termino(
-    valor,
-    letra,
-    primero = false
-) {
-
-    if (valor === 0) {
-
-        return "";
-
-    }
-
-
-    const absoluto =
-        Math.abs(valor);
-
-
-    let numero = absoluto;
-
-
-    if (
-        letra &&
-        absoluto === 1
-    ) {
-
-        numero = "";
-
-    }
-
-
-    if (primero) {
-
-        return (
-            valor < 0
-                ? "-"
-                : ""
-        ) +
-        numero +
-        letra;
-
-    }
-
-
-    return (
-        valor < 0
-            ? " - "
-            : " + "
-    ) +
-    numero +
-    letra;
-
-}
-
 
 
 /* =========================
    ECUACIÓN ORIGINAL
 ========================= */
 
-function construirEcuacion(
-    A,
-    B,
-    C
-) {
+function mostrarEcuacion(A, B, C) {
 
-    let resultado = "";
-
+    let texto = "";
 
     if (A !== 0) {
 
-        resultado +=
-            termino(
-                A,
-                "x",
-                true
-            );
+        if (A === 1) {
+            texto += "x";
+        }
 
+        else if (A === -1) {
+            texto += "-x";
+        }
+
+        else {
+            texto += `${A}x`;
+        }
     }
 
 
     if (B !== 0) {
 
-        resultado +=
-            termino(
-                B,
-                "y",
-                resultado === ""
-            );
+        if (texto !== "") {
 
+            if (B > 0) {
+                texto += " + ";
+            }
+
+            else {
+                texto += " - ";
+            }
+
+            let numeroB =
+                Math.abs(B);
+
+            if (numeroB === 1) {
+                texto += "y";
+            }
+
+            else {
+                texto += numeroB + "y";
+            }
+
+        }
+
+        else {
+
+            if (B === 1) {
+                texto += "y";
+            }
+
+            else if (B === -1) {
+                texto += "-y";
+            }
+
+            else {
+                texto += B + "y";
+            }
+        }
     }
 
 
     if (C !== 0) {
 
-        resultado +=
-            termino(
-                C,
-                "",
-                resultado === ""
-            );
+        if (texto !== "") {
 
+            if (C > 0) {
+                texto += " + " + C;
+            }
+
+            else {
+                texto += " - " + Math.abs(C);
+            }
+
+        }
+
+        else {
+
+            texto += C;
+        }
     }
 
 
-    if (resultado === "") {
-
-        resultado = "0";
-
+    if (texto === "") {
+        texto = "0";
     }
 
 
-    return resultado + " = 0";
-
+    return texto + " = 0";
 }
-
 
 
 /* =========================
    FORMA y = mx + b
 ========================= */
 
-function crearFormula(
-    mTexto,
-    bTexto,
-    bNumero
-) {
+function formaFinal(m, b) {
 
     let resultado = "y = ";
 
 
-    if (mTexto === "1") {
+    if (m === 0) {
+
+        resultado += fraccion(b);
+
+        return resultado;
+    }
+
+
+    if (m === 1) {
 
         resultado += "x";
-
     }
 
-    else if (mTexto === "-1") {
+    else if (m === -1) {
 
         resultado += "-x";
-
-    }
-
-    else if (mTexto === "0") {
-
-        resultado += "0";
-
     }
 
     else {
 
         resultado +=
-            mTexto + "x";
-
+            fraccion(m) + "x";
     }
 
 
-    if (bNumero > 0) {
+    if (b > 0) {
 
         resultado +=
-            " + " + bTexto;
-
+            " + " + fraccion(b);
     }
 
-    else if (bNumero < 0) {
+    else if (b < 0) {
 
         resultado +=
-            " - " +
-            bTexto.replace("-", "");
-
+            " - " + fraccion(Math.abs(b));
     }
 
 
     return resultado;
-
 }
 
 
-
 /* =========================
-   RESOLVER
+   CALCULAR
 ========================= */
 
-function resolver() {
-
+function calcular() {
 
     const A =
         Number(
-            document.getElementById("a").value
+            document.getElementById("A").value
         );
-
 
     const B =
         Number(
-            document.getElementById(
-                "bGeneral"
-            ).value
+            document.getElementById("B").value
         );
-
 
     const C =
         Number(
-            document.getElementById("c").value
+            document.getElementById("C").value
         );
 
+
+    const error =
+        document.getElementById("error");
+
+
+    error.textContent = "";
 
 
     if (
@@ -325,341 +248,193 @@ function resolver() {
         !Number.isFinite(C)
     ) {
 
-        alert(
-            "Introduce números válidos."
-        );
+        error.textContent =
+            "Ingresa valores numéricos válidos.";
 
         return;
-
     }
-
 
 
     if (B === 0) {
 
-        alert(
-            "El coeficiente de y no puede ser 0."
-        );
+        error.textContent =
+            "B no puede ser 0 porque no se puede despejar Y.";
 
         return;
-
     }
 
 
+    /* =========================
+       OBTENER m Y b
 
-    /*
        Ax + By + C = 0
 
        By = -Ax - C
 
        y = (-A/B)x + (-C/B)
-    */
+    ========================= */
+
+    m = -A / B;
+
+    b = -C / B;
 
 
-    const numeradorM = -A;
+    /* =========================
+       SEGUNDO PUNTO
 
-    const denominadorM = B;
+       Elegimos x = 1
 
+       y = m(1) + b
+    ========================= */
 
-    const numeradorB = -C;
+    segundoX = 1;
 
-    const denominadorB = B;
-
-
-
-    pendienteActual =
-        numeradorM /
-        denominadorM;
+    segundoY =
+        m * segundoX + b;
 
 
-    corteActual =
-        numeradorB /
-        denominadorB;
-
-
-
-    const mTexto =
-        fraccion(
-            numeradorM,
-            denominadorM
-        );
-
-
-    const bTexto =
-        fraccion(
-            numeradorB,
-            denominadorB
-        );
-
-
-
-    /* ECUACIÓN ORIGINAL */
-
-    const original =
-        construirEcuacion(
-            A,
-            B,
-            C
-        );
-
-
-    document.getElementById(
-        "ecuacionOriginal"
-    ).textContent =
-        original;
-
-
-
-    /* DESPEJE */
-
-    let despeje =
-        `${B}y = `;
-
-
-    const xDerecha = -A;
-
-    const cDerecha = -C;
-
-
-    if (xDerecha !== 0) {
-
-        despeje +=
-            termino(
-                xDerecha,
-                "x",
-                true
-            );
-
-    }
-
-
-    if (cDerecha !== 0) {
-
-        despeje +=
-            termino(
-                cDerecha,
-                "",
-                xDerecha === 0
-            );
-
-    }
-
-
-    if (
-        xDerecha === 0 &&
-        cDerecha === 0
-    ) {
-
-        despeje += "0";
-
-    }
-
-
-    document.getElementById(
-        "despeje"
-    ).textContent =
-        despeje;
-
-
-
-    /* DIVISIÓN */
-
-    const division =
-        `y = (${xDerecha}/${B})x + (${cDerecha}/${B})`;
-
-
-    document.getElementById(
-        "division"
-    ).textContent =
-        division;
-
-
-
-    /* FORMULA FINAL */
-
-    const formula =
-        crearFormula(
-            mTexto,
-            bTexto,
-            corteActual
-        );
-
-
-    document.getElementById(
-        "formulaFinal"
-    ).textContent =
-        formula;
-
-
-    document.getElementById(
-        "ecuacionGrafica"
-    ).textContent =
-        formula;
-
-
-
-    /* m */
+    /* =========================
+       RESULTADOS
+    ========================= */
 
     document.getElementById(
         "pendiente"
     ).textContent =
-        `m = ${mTexto}`;
+        fraccion(m);
 
-
-
-    /* b */
 
     document.getElementById(
-        "interseccion"
+        "intercepto"
     ).textContent =
-        `b = ${bTexto}`;
+        fraccion(b);
 
+
+    document.getElementById(
+        "ecuacion"
+    ).textContent =
+        formaFinal(m, b);
 
 
     /* =========================
-       PUNTOS
+       PROCEDIMIENTO
     ========================= */
 
-
-    const x1 = 0;
-
-    const y1 =
-        corteActual;
-
-
-
-    let salto =
-        Math.abs(B);
-
-
-    if (salto < 1) {
-
-        salto = 1;
-
-    }
-
-
-    const x2 = salto;
-
-
-    const y2 =
-        pendienteActual *
-        x2 +
-        corteActual;
-
+    document.getElementById(
+        "paso1"
+    ).textContent =
+        mostrarEcuacion(A, B, C);
 
 
     document.getElementById(
-        "punto1"
+        "paso2"
     ).textContent =
-        `(${formatearNumero(x1)}, ${formatearNumero(y1)})`;
+        `${B}y = ${-A}x ${
+            C >= 0
+                ? "- " + C
+                : "+ " + Math.abs(C)
+        }`;
+
+
+    document.getElementById(
+        "paso3"
+    ).textContent =
+        `y = (${fraccion(-A)}/${B})x + (${fraccion(-C)}/${B})`;
+
+
+    document.getElementById(
+        "paso4"
+    ).textContent =
+        formaFinal(m, b);
+
+
+    /* =========================
+       MOSTRAR LOS DOS PUNTOS
+    ========================= */
+
+    document.getElementById(
+        "puntoB"
+    ).textContent =
+        `(0, ${fraccion(b)})`;
 
 
     document.getElementById(
         "punto2"
     ).textContent =
-        `(${formatearNumero(x2)}, ${formatearNumero(y2)})`;
+        `(${fraccion(segundoX)}, ${fraccion(segundoY)})`;
 
 
+    /* =========================
+       DIBUJAR
+    ========================= */
 
-    dibujar();
-
+    dibujarGrafica();
 }
-
-
-
-/* =========================
-   FORMATO DE NÚMEROS
-========================= */
-
-function formatearNumero(
-    numero
-) {
-
-    if (
-        Math.abs(
-            numero -
-            Math.round(numero)
-        ) < 0.000001
-    ) {
-
-        return Math.round(numero);
-
-    }
-
-
-    return Number(
-        numero.toFixed(2)
-    );
-
-}
-
 
 
 /* =========================
    CANVAS
 ========================= */
 
-function prepararCanvas() {
+function ajustarCanvas() {
 
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-
-    const dpr =
+    const escala =
         window.devicePixelRatio || 1;
 
 
     canvas.width =
-        Math.round(
-            rect.width * dpr
-        );
+        canvas.clientWidth * escala;
 
 
     canvas.height =
-        Math.round(
-            rect.height * dpr
-        );
+        canvas.clientHeight * escala;
 
 
     ctx.setTransform(
-        dpr,
+        escala,
         0,
         0,
-        dpr,
+        escala,
         0,
         0
     );
-
-
-    return {
-
-        ancho: rect.width,
-
-        alto: rect.height
-
-    };
-
 }
 
 
-
 /* =========================
-   DIBUJAR
+   CONVERTIR COORDENADAS
 ========================= */
 
-function dibujar() {
+function convertirX(x) {
+
+    return (
+        canvas.clientWidth / 2
+        + desplazamientoX
+        + x * zoom
+    );
+}
 
 
-    const {
+function convertirY(y) {
 
-        ancho,
-        alto
+    return (
+        canvas.clientHeight / 2
+        + desplazamientoY
+        - y * zoom
+    );
+}
 
-    } =
-        prepararCanvas();
 
+/* =========================
+   DIBUJAR GRÁFICA
+========================= */
+
+function dibujarGrafica() {
+
+    const ancho =
+        canvas.clientWidth;
+
+    const alto =
+        canvas.clientHeight;
 
 
     ctx.clearRect(
@@ -670,92 +445,32 @@ function dibujar() {
     );
 
 
-
-    ctx.fillStyle =
-        "#ffffff";
-
-
-    ctx.fillRect(
-        0,
-        0,
-        ancho,
-        alto
-    );
-
-
-
-    const centroX =
-        ancho / 2 +
-        desplazamientoX;
-
-
-    const centroY =
-        alto / 2 +
-        desplazamientoY;
-
-
-
-    dibujarCuadricula(
-        ancho,
-        alto,
-        centroX,
-        centroY
-    );
-
-
-    dibujarEjes(
-        ancho,
-        alto,
-        centroX,
-        centroY
-    );
-
-
-    dibujarRecta(
-        ancho,
-        alto,
-        centroX,
-        centroY
-    );
-
-
-    dibujarPuntos(
-        centroX,
-        centroY
-    );
-
-}
-
-
-
-/* =========================
-   CUADRÍCULA
-========================= */
-
-function dibujarCuadricula(
-    ancho,
-    alto,
-    centroX,
-    centroY
-) {
-
+    /* =========================
+       CUADRÍCULA
+    ========================= */
 
     ctx.strokeStyle =
-        "#e5e7eb";
-
+        "#dfe7ee";
 
     ctx.lineWidth = 1;
 
 
-
     let inicioX =
-        centroX % escala;
+        (
+            (
+                ancho / 2
+                + desplazamientoX
+            )
+            % zoom
+            + zoom
+        )
+        % zoom;
 
 
     for (
         let x = inicioX;
-        x <= ancho;
-        x += escala
+        x < ancho;
+        x += zoom
     ) {
 
         ctx.beginPath();
@@ -771,19 +486,25 @@ function dibujarCuadricula(
         );
 
         ctx.stroke();
-
     }
 
 
-
     let inicioY =
-        centroY % escala;
+        (
+            (
+                alto / 2
+                + desplazamientoY
+            )
+            % zoom
+            + zoom
+        )
+        % zoom;
 
 
     for (
         let y = inicioY;
-        y <= alto;
-        y += escala
+        y < alto;
+        y += zoom
     ) {
 
         ctx.beginPath();
@@ -799,191 +520,194 @@ function dibujarCuadricula(
         );
 
         ctx.stroke();
-
     }
 
-}
 
+    /* =========================
+       EJES X E Y
+    ========================= */
 
+    const ejeX =
+        convertirX(0);
 
-/* =========================
-   EJES
-========================= */
-
-function dibujarEjes(
-    ancho,
-    alto,
-    centroX,
-    centroY
-) {
+    const ejeY =
+        convertirY(0);
 
 
     ctx.strokeStyle =
-        "#111827";
-
+        "#455a64";
 
     ctx.lineWidth = 2;
 
 
-
-    /* EJE X */
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        0,
-        centroY
-    );
-
-    ctx.lineTo(
-        ancho,
-        centroY
-    );
-
-    ctx.stroke();
-
-
-
-    /* EJE Y */
+    /* Eje Y */
 
     ctx.beginPath();
 
     ctx.moveTo(
-        centroX,
+        ejeX,
         0
     );
 
     ctx.lineTo(
-        centroX,
+        ejeX,
         alto
     );
 
     ctx.stroke();
 
 
+    /* Eje X */
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        0,
+        ejeY
+    );
+
+    ctx.lineTo(
+        ancho,
+        ejeY
+    );
+
+    ctx.stroke();
+
+
+    /* =========================
+       NÚMEROS
+    ========================= */
 
     ctx.fillStyle =
-        "#374151";
-
+        "#607d8b";
 
     ctx.font =
-        "12px Arial";
-
-
-
-    /* NÚMEROS X */
-
-    const cantidadX =
-        Math.ceil(
-            ancho / escala
-        );
-
-
-    ctx.textAlign =
-        "center";
+        "11px Arial";
 
 
     for (
-        let i = -cantidadX;
-        i <= cantidadX;
-        i++
+        let x = -30;
+        x <= 30;
+        x++
     ) {
 
-
-        if (i === 0) {
-
+        if (x === 0) {
             continue;
-
         }
 
 
-        const pixel =
-            centroX +
-            i * escala;
+        let px =
+            convertirX(x);
 
 
         if (
-            pixel >= 0 &&
-            pixel <= ancho
+            px > 0 &&
+            px < ancho
         ) {
 
             ctx.fillText(
-                i,
-                pixel,
-                centroY + 17
+                x,
+                px + 3,
+                ejeY - 5
             );
-
         }
-
     }
-
-
-
-    /* NÚMEROS Y */
-
-    const cantidadY =
-        Math.ceil(
-            alto / escala
-        );
-
-
-    ctx.textAlign =
-        "right";
 
 
     for (
-        let i = -cantidadY;
-        i <= cantidadY;
-        i++
+        let y = -30;
+        y <= 30;
+        y++
     ) {
 
-
-        if (i === 0) {
-
+        if (y === 0) {
             continue;
-
         }
 
 
-        const pixel =
-            centroY -
-            i * escala;
+        let py =
+            convertirY(y);
 
 
         if (
-            pixel >= 0 &&
-            pixel <= alto
+            py > 0 &&
+            py < alto
         ) {
 
             ctx.fillText(
-                i,
-                centroX - 7,
-                pixel + 4
+                y,
+                ejeX + 5,
+                py - 3
             );
-
         }
-
     }
 
-}
+
+    /* =========================
+       UNIR LOS DOS PUNTOS
+
+       B = (0,b)
+
+       P₂ = (1,m+b)
+
+       Se dibuja un segmento
+       entre los dos puntos.
+    ========================= */
+
+    const bx =
+        convertirX(0);
+
+    const by =
+        convertirY(b);
 
 
+    const p2x =
+        convertirX(segundoX);
 
-/* =========================
-   RECTA
-========================= */
-
-function dibujarRecta(
-    ancho,
-    alto,
-    centroX,
-    centroY
-) {
+    const p2y =
+        convertirY(segundoY);
 
 
     ctx.strokeStyle =
-        "#16a34a";
+        "#90caf9";
 
+    ctx.lineWidth = 7;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        bx,
+        by
+    );
+
+    ctx.lineTo(
+        p2x,
+        p2y
+    );
+
+    ctx.stroke();
+
+
+    /* =========================
+       RECTA COMPLETA
+
+       La misma línea que pasa
+       por B y P₂ se extiende
+       hacia ambos lados.
+    ========================= */
+
+    let x1 = -100;
+    let x2 = 100;
+
+    let y1 =
+        m * x1 + b;
+
+    let y2 =
+        m * x2 + b;
+
+
+    ctx.strokeStyle =
+        "#1976d2";
 
     ctx.lineWidth = 4;
 
@@ -991,410 +715,311 @@ function dibujarRecta(
     ctx.beginPath();
 
 
-    let iniciado = false;
+    ctx.moveTo(
+        convertirX(x1),
+        convertirY(y1)
+    );
 
 
-
-    for (
-        let px = 0;
-        px <= ancho;
-        px++
-    ) {
-
-
-        const x =
-            (px - centroX) /
-            escala;
-
-
-        const y =
-            pendienteActual *
-            x +
-            corteActual;
-
-
-        const py =
-            centroY -
-            y * escala;
-
-
-
-        if (!iniciado) {
-
-            ctx.moveTo(
-                px,
-                py
-            );
-
-            iniciado = true;
-
-        }
-
-        else {
-
-            ctx.lineTo(
-                px,
-                py
-            );
-
-        }
-
-    }
+    ctx.lineTo(
+        convertirX(x2),
+        convertirY(y2)
+    );
 
 
     ctx.stroke();
 
-}
 
+    /* =========================
+       PUNTO B
+    ========================= */
 
-
-/* =========================
-   PUNTOS
-========================= */
-
-function dibujarPuntos(
-    centroX,
-    centroY
-) {
-
-
-    const puntos = [];
-
-
-    puntos.push({
-
-        x: 0,
-
-        y: corteActual
-
-    });
-
-
-
-    let B =
-        Number(
-            document.getElementById(
-                "bGeneral"
-            ).value
-        );
-
-
-    let salto =
-        Math.abs(B);
-
-
-    if (salto < 1) {
-
-        salto = 1;
-
-    }
-
-
-
-    const segundoX =
-        salto;
-
-
-    const segundoY =
-        pendienteActual *
-        segundoX +
-        corteActual;
-
-
-
-    puntos.push({
-
-        x: segundoX,
-
-        y: segundoY
-
-    });
-
-
-
-    puntos.forEach(
-        punto => {
-
-
-            const px =
-                centroX +
-                punto.x *
-                escala;
-
-
-            const py =
-                centroY -
-                punto.y *
-                escala;
-
-
-
-            /* PUNTO */
-
-            ctx.fillStyle =
-                "#dc2626";
-
-
-            ctx.beginPath();
-
-
-            ctx.arc(
-                px,
-                py,
-                6,
-                0,
-                Math.PI * 2
-            );
-
-
-            ctx.fill();
-
-
-
-            /* ETIQUETA */
-
-            ctx.fillStyle =
-                "#111827";
-
-
-            ctx.font =
-                "bold 13px Arial";
-
-
-            ctx.textAlign =
-                "left";
-
-
-            ctx.fillText(
-
-                `(${formatearNumero(punto.x)}, ${formatearNumero(punto.y)})`,
-
-                px + 10,
-
-                py - 10
-
-            );
-
-        }
+    dibujarPunto(
+        0,
+        b,
+        "#e53935",
+        `B (0, ${fraccion(b)})`
     );
 
+
+    /* =========================
+       PUNTO P₂
+    ========================= */
+
+    dibujarPunto(
+        segundoX,
+        segundoY,
+        "#43a047",
+        `P₂ (${fraccion(segundoX)}, ${fraccion(segundoY)})`
+    );
 }
 
 
-
 /* =========================
-   BOTÓN RESOLVER
+   DIBUJAR PUNTO
 ========================= */
 
-document.getElementById(
-    "resolver"
-).addEventListener(
-    "click",
-    resolver
-);
+function dibujarPunto(
+    x,
+    y,
+    color,
+    texto
+) {
 
+    const px =
+        convertirX(x);
+
+    const py =
+        convertirY(y);
+
+
+    /* PUNTO */
+
+    ctx.beginPath();
+
+
+    ctx.arc(
+        px,
+        py,
+        8,
+        0,
+        Math.PI * 2
+    );
+
+
+    ctx.fillStyle =
+        color;
+
+    ctx.fill();
+
+
+    /* BORDE */
+
+    ctx.strokeStyle =
+        "#ffffff";
+
+    ctx.lineWidth = 2;
+
+    ctx.stroke();
+
+
+    /* TEXTO */
+
+    ctx.fillStyle =
+        "#263238";
+
+    ctx.font =
+        "bold 12px Arial";
+
+
+    ctx.fillText(
+        texto,
+        px + 12,
+        py - 12
+    );
+}
 
 
 /* =========================
-   BOTÓN LIMPIAR
+   ZOOM
 ========================= */
 
-document.getElementById(
-    "limpiar"
-).addEventListener(
-    "click",
-    function() {
+function zoomMas() {
+
+    zoom *= 1.25;
 
 
-        document.getElementById(
-            "a"
-        ).value = 1;
-
-
-        document.getElementById(
-            "bGeneral"
-        ).value = 1;
-
-
-        document.getElementById(
-            "c"
-        ).value = 0;
-
-
-        escala = 45;
-
-
-        desplazamientoX = 0;
-
-        desplazamientoY = 0;
-
-
-        resolver();
-
+    if (zoom > 150) {
+        zoom = 150;
     }
-);
 
 
-
-/* =========================
-   ZOOM +
-========================= */
-
-document.getElementById(
-    "zoomMas"
-).addEventListener(
-    "click",
-    function() {
+    dibujarGrafica();
+}
 
 
-        escala =
-            Math.min(
-                100,
-                escala + 8
-            );
+function zoomMenos() {
+
+    zoom /= 1.25;
 
 
-        dibujar();
-
+    if (zoom < 10) {
+        zoom = 10;
     }
-);
 
 
-
-/* =========================
-   ZOOM -
-========================= */
-
-document.getElementById(
-    "zoomMenos"
-).addEventListener(
-    "click",
-    function() {
-
-
-        escala =
-            Math.max(
-                20,
-                escala - 8
-            );
-
-
-        dibujar();
-
-    }
-);
-
+    dibujarGrafica();
+}
 
 
 /* =========================
    CENTRAR
 ========================= */
 
-document.getElementById(
-    "centrar"
-).addEventListener(
-    "click",
-    function() {
+function centrarGrafica() {
+
+    desplazamientoX = 0;
+
+    desplazamientoY = 0;
+
+    zoom = 40;
 
 
-        desplazamientoX = 0;
+    dibujarGrafica();
+}
 
-        desplazamientoY = 0;
+
+/* =========================
+   ARRASTRAR CON MOUSE
+========================= */
+
+canvas.addEventListener(
+    "mousedown",
+    function(evento) {
+
+        arrastrando = true;
 
 
-        dibujar();
+        ultimoX =
+            evento.clientX;
 
+        ultimoY =
+            evento.clientY;
     }
 );
 
 
+canvas.addEventListener(
+    "mousemove",
+    function(evento) {
+
+        if (!arrastrando) {
+            return;
+        }
+
+
+        desplazamientoX +=
+            evento.clientX
+            - ultimoX;
+
+
+        desplazamientoY +=
+            evento.clientY
+            - ultimoY;
+
+
+        ultimoX =
+            evento.clientX;
+
+        ultimoY =
+            evento.clientY;
+
+
+        dibujarGrafica();
+    }
+);
+
+
+canvas.addEventListener(
+    "mouseup",
+    function() {
+
+        arrastrando = false;
+    }
+);
+
+
+canvas.addEventListener(
+    "mouseleave",
+    function() {
+
+        arrastrando = false;
+    }
+);
+
 
 /* =========================
-   ARRASTRAR GRÁFICA
+   ARRASTRAR EN CELULAR
 ========================= */
 
 canvas.addEventListener(
-    "pointerdown",
+    "touchstart",
     function(evento) {
+
+        if (
+            evento.touches.length !== 1
+        ) {
+
+            return;
+        }
 
 
         arrastrando = true;
 
 
-        inicioX =
-            evento.clientX;
+        ultimoX =
+            evento.touches[0].clientX;
 
 
-        inicioY =
-            evento.clientY;
-
-
-        canvas.setPointerCapture(
-            evento.pointerId
-        );
-
+        ultimoY =
+            evento.touches[0].clientY;
     }
 );
 
 
-
 canvas.addEventListener(
-    "pointermove",
+    "touchmove",
     function(evento) {
 
-
         if (!arrastrando) {
-
             return;
-
         }
 
 
+        if (
+            evento.touches.length !== 1
+        ) {
+
+            return;
+        }
+
+
+        evento.preventDefault();
+
+
         desplazamientoX +=
-            evento.clientX -
-            inicioX;
+            evento.touches[0].clientX
+            - ultimoX;
 
 
         desplazamientoY +=
-            evento.clientY -
-            inicioY;
+            evento.touches[0].clientY
+            - ultimoY;
 
 
-        inicioX =
-            evento.clientX;
+        ultimoX =
+            evento.touches[0].clientX;
 
 
-        inicioY =
-            evento.clientY;
+        ultimoY =
+            evento.touches[0].clientY;
 
 
-        dibujar();
-
+        dibujarGrafica();
+    },
+    {
+        passive: false
     }
 );
-
 
 
 canvas.addEventListener(
-    "pointerup",
+    "touchend",
     function() {
 
         arrastrando = false;
-
     }
 );
-
-
-
-canvas.addEventListener(
-    "pointercancel",
-    function() {
-
-        arrastrando = false;
-
-    }
-);
-
 
 
 /* =========================
@@ -1403,13 +1028,25 @@ canvas.addEventListener(
 
 window.addEventListener(
     "resize",
-    dibujar
-);
+    function() {
 
+        ajustarCanvas();
+
+        dibujarGrafica();
+    }
+);
 
 
 /* =========================
    INICIAR
 ========================= */
 
-resolver(); 
+window.addEventListener(
+    "load",
+    function() {
+
+        ajustarCanvas();
+
+        calcular();
+    }
+);
