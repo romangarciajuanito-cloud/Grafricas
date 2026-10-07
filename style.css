@@ -1,682 +1,340 @@
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
-
 
 body {
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background: #eef2f7;
-
-    color: #202124;
-
-}
-
-
-/* =========================
-   ENCABEZADO
-========================= */
-
-header {
-
-    background:
-        linear-gradient(
-            135deg,
-            #1e3a8a,
-            #2563eb
-        );
-
-    color: white;
-
-    text-align: center;
-
-    padding: 28px 15px;
-
-}
-
-
-header h1 {
-
-    font-size: 30px;
-
-    margin-bottom: 10px;
-
-}
-
-
-header p {
-
-    font-size: 16px;
-
-    color: #dbeafe;
-
-}
-
-
-
-/* =========================
-   CONTENEDOR PRINCIPAL
-========================= */
-
-main {
-
-    width: 95%;
-
-    max-width: 1350px;
-
-    margin: 25px auto;
-
-    display: grid;
-
-    grid-template-columns:
-        420px
-        1fr;
-
-    gap: 22px;
-
-}
-
-
-
-/* =========================
-   PANELES
-========================= */
-
-.panel,
-.graficaPanel {
-
-    background: white;
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 5px 20px
-        rgba(0,0,0,.10);
-
-}
-
-
-
-/* =========================
-   PANEL IZQUIERDO
-========================= */
-
-.panel {
-
+    font-family: Arial, sans-serif;
+    background: #eef4fb;
+    color: #263238;
     padding: 25px;
+}
 
+.contenedor {
+    max-width: 950px;
+    margin: auto;
 }
 
 
-.panel h2 {
+/* TITULO */
 
-    margin-bottom: 10px;
-
-}
-
-
-.descripcion {
-
-    color: #6b7280;
-
-    margin-bottom: 15px;
-
-}
-
-
-
-/* =========================
-   ENTRADA ECUACIÓN
-========================= */
-
-.formulaEntrada {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    flex-wrap: wrap;
-
-    gap: 7px;
-
-    background: #f1f5f9;
-
-    border-radius: 12px;
-
-    padding: 18px 8px;
-
-    margin-bottom: 15px;
-
-    font-size: 21px;
-
-}
-
-
-.formulaEntrada input {
-
-    width: 65px;
-
-    padding: 10px 5px;
-
+h1 {
     text-align: center;
-
-    font-size: 18px;
-
-    border: 2px solid #cbd5e1;
-
-    border-radius: 8px;
-
-    background: white;
-
-}
-
-
-.formulaEntrada input:focus {
-
-    outline: none;
-
-    border-color: #2563eb;
-
-}
-
-
-
-/* =========================
-   BOTONES
-========================= */
-
-button {
-
-    border: none;
-
-    border-radius: 9px;
-
-    padding: 13px 15px;
-
-    font-size: 15px;
-
-    cursor: pointer;
-
-    transition: .2s;
-
-}
-
-
-button:hover {
-
-    transform: translateY(-1px);
-
-    opacity: .9;
-
-}
-
-
-.botonPrincipal {
-
-    width: 100%;
-
-    background: #2563eb;
-
-    color: white;
-
-    margin-bottom: 9px;
-
-}
-
-
-.botonSecundario {
-
-    width: 100%;
-
-    background: #64748b;
-
-    color: white;
-
-}
-
-
-
-/* =========================
-   PROCEDIMIENTO
-========================= */
-
-.procedimiento {
-
-    margin-top: 25px;
-
-}
-
-
-.paso {
-
-    display: flex;
-
-    gap: 12px;
-
-    padding: 15px 4px;
-
-    border-bottom:
-        1px solid #e5e7eb;
-
-}
-
-
-.numero {
-
-    min-width: 32px;
-
-    height: 32px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: #dbeafe;
-
-    color: #1d4ed8;
-
-    border-radius: 50%;
-
-    font-weight: bold;
-
-}
-
-
-.contenidoPaso {
-
-    flex: 1;
-
-}
-
-
-.contenidoPaso h3 {
-
-    font-size: 15px;
-
+    color: #1769aa;
     margin-bottom: 8px;
-
 }
 
+.subtitulo {
+    text-align: center;
+    color: #607d8b;
+}
 
 .formula {
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: 20px;
-
-    line-height: 1.5;
-
-}
-
-
-.pasoFinal {
-
-    background: #eff6ff;
-
-    border-radius: 10px;
-
-    margin-top: 10px;
-
-    padding: 15px;
-
-}
-
-
-.pasoFinal .numero {
-
-    background: #2563eb;
-
-    color: white;
-
-}
-
-
-.formulaFinal {
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: 25px;
-
+    width: fit-content;
+    margin: 15px auto 25px;
+    background: white;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-size: 24px;
     font-weight: bold;
-
-    color: #1d4ed8;
-
+    color: #1769aa;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 
+/* BLOQUES */
 
-/* =========================
-   RESULTADOS
-========================= */
-
-.resultados {
-
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 10px;
-
-    margin-top: 20px;
-
+.entrada,
+.resultado,
+.procedimiento,
+.puntos,
+.grafica-container {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
 
+h2 {
+    color: #1769aa;
+    margin-bottom: 20px;
+}
+
+
+/* INPUTS */
+
+.inputs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.inputs label {
+    flex: 1;
+    font-weight: bold;
+    color: #1769aa;
+}
+
+.inputs input {
+    width: 100%;
+    margin-top: 7px;
+    padding: 12px;
+    border: 2px solid #d6e3ef;
+    border-radius: 8px;
+    font-size: 17px;
+    outline: none;
+}
+
+.inputs input:focus {
+    border-color: #2196f3;
+}
+
+
+/* BOTONES */
+
+button {
+    border: none;
+    background: #1976d2;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #125ca0;
+}
+
+#error {
+    color: #d32f2f;
+    margin-top: 12px;
+}
+
+
+/* RESULTADOS */
 
 .resultado {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
 
-    background: #f1f5f9;
+.resultado h2 {
+    grid-column: span 2;
+}
 
+.tarjeta,
+.ecuacion {
+    background: #f2f8fd;
+    padding: 20px;
     border-radius: 10px;
-
-    padding: 15px;
-
     text-align: center;
-
 }
 
+.tarjeta h3,
+.ecuacion h3 {
+    color: #607d8b;
+    margin-bottom: 10px;
+}
 
-.resultado span {
+.tarjeta p,
+.ecuacion p {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1769aa;
+}
 
-    display: block;
-
+.tarjeta span {
+    color: #607d8b;
     font-size: 13px;
+}
 
-    color: #64748b;
-
-    margin-bottom: 7px;
-
+.ecuacion {
+    grid-column: span 2;
 }
 
 
-.resultado strong {
+/* PROCEDIMIENTO */
 
-    font-family:
-        Georgia,
-        serif;
+.paso {
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #f5f9fd;
+    border-left: 4px solid #2196f3;
+    border-radius: 5px;
+}
 
-    font-size: 21px;
+.paso strong {
+    color: #1769aa;
+}
 
+.paso p {
+    margin-top: 7px;
+    line-height: 1.5;
 }
 
 
-
-/* =========================
-   PUNTOS
-========================= */
-
-.tituloPuntos {
-
-    margin-top: 22px;
-
-    font-size: 19px;
-
-}
-
+/* PUNTOS */
 
 .puntos {
-
     display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 10px;
-
-    margin-top: 10px;
-
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
 }
 
-
-.puntos div {
-
-    background: #dbeafe;
-
-    color: #1e3a8a;
-
-    padding: 12px;
-
-    border-radius: 9px;
-
-    text-align: center;
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: 17px;
-
+.puntos h2 {
+    grid-column: span 2;
 }
 
-
-
-/* =========================
-   GRÁFICA
-========================= */
-
-.graficaPanel {
-
+.punto {
     padding: 20px;
-
-    min-width: 0;
-
-}
-
-
-.encabezadoGrafica {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 15px;
-
-}
-
-
-.encabezadoGrafica p {
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: 20px;
-
-    color: #1d4ed8;
-
-    margin-top: 5px;
-
-    font-weight: bold;
-
-}
-
-
-
-/* =========================
-   CANVAS
-========================= */
-
-.canvasContenedor {
-
-    width: 100%;
-
-    height: 650px;
-
-}
-
-
-#grafica {
-
-    display: block;
-
-    width: 100%;
-
-    height: 100%;
-
-    background: white;
-
-    border:
-        1px solid #cbd5e1;
-
     border-radius: 12px;
+    text-align: center;
+}
 
-    touch-action: none;
+.punto h3 {
+    margin-bottom: 10px;
+}
 
+.punto p {
+    font-size: 23px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.punto span {
+    font-size: 13px;
+    color: #607d8b;
+}
+
+.punto-b {
+    background: #fff1f1;
+    border: 2px solid #ef9a9a;
+}
+
+.punto-b h3,
+.punto-b p {
+    color: #d32f2f;
+}
+
+.punto-p2 {
+    background: #eef8ef;
+    border: 2px solid #a5d6a7;
+}
+
+.punto-p2 h3,
+.punto-p2 p {
+    color: #2e7d32;
 }
 
 
+/* GRÁFICA */
 
-/* =========================
-   CONTROLES
-========================= */
+.explicacion-grafica {
+    color: #607d8b;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.grafica-container canvas {
+    width: 100%;
+    height: 500px;
+    background: #fafcff;
+    border: 1px solid #dce7f0;
+    border-radius: 10px;
+    cursor: grab;
+}
+
+.grafica-container canvas:active {
+    cursor: grabbing;
+}
+
+
+/* LEYENDA */
+
+.leyenda {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 18px;
+    font-size: 13px;
+    color: #607d8b;
+}
+
+.leyenda div {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.circulo {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 50%;
+}
+
+.rojo {
+    background: #e53935;
+}
+
+.verde {
+    background: #43a047;
+}
+
+.linea-azul {
+    width: 22px;
+    height: 4px;
+    display: inline-block;
+    background: #1976d2;
+    border-radius: 5px;
+}
+
+
+/* CONTROLES */
 
 .controles {
-
     display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 8px;
-
-    margin-top: 12px;
-
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
 }
 
 
-.controles button {
+/* CELULAR */
 
-    flex: 1;
+@media (max-width: 650px) {
 
-    min-width: 110px;
+    body {
+        padding: 12px;
+    }
 
-    background: #1e40af;
+    .inputs {
+        flex-direction: column;
+    }
 
-    color: white;
-
-}
-
-
-
-/* =========================
-   FOOTER
-========================= */
-
-footer {
-
-    text-align: center;
-
-    color: #64748b;
-
-    padding: 25px;
-
-}
-
-
-
-/* =========================
-   CELULAR
-========================= */
-
-@media (max-width: 900px) {
-
-    main {
-
+    .resultado {
         grid-template-columns: 1fr;
-
     }
 
-
-    .canvasContenedor {
-
-        height: 520px;
-
+    .resultado h2,
+    .ecuacion {
+        grid-column: span 1;
     }
 
+    .puntos {
+        grid-template-columns: 1fr;
+    }
+
+    .puntos h2 {
+        grid-column: span 1;
+    }
+
+    .grafica-container canvas {
+        height: 400px;
+    }
 }
-
-
-
-@media (max-width: 500px) {
-
-    header h1 {
-
-        font-size: 24px;
-
-    }
-
-
-    header p {
-
-        font-size: 14px;
-
-    }
-
-
-    main {
-
-        width: 94%;
-
-        margin-top: 15px;
-
-    }
-
-
-    .panel,
-    .graficaPanel {
-
-        padding: 16px;
-
-    }
-
-
-    .canvasContenedor {
-
-        height: 430px;
-
-    }
-
-
-    .formulaEntrada {
-
-        font-size: 18px;
-
-    }
-
-
-    .formulaEntrada input {
-
-        width: 55px;
-
-    }
-
-
-    .formula {
-
-        font-size: 18px;
-
-    }
-
-
-    .formulaFinal {
-
-        font-size: 21px;
-
-    }
-
-      } 
